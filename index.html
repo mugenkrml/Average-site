@@ -67,7 +67,27 @@ button:hover { background:#023e8a; }
   margin: 40px 0 20px 0;
 }
 #footer a { color: #fff; text-decoration: underline; }
+
+#submitViewBtn {
+  background: linear-gradient(135deg, #00d4ff, #0096c7);
+  border: 2px solid #00b4d8;
+  box-shadow: 0 4px 12px rgba(0, 180, 216, 0.5);
+  font-weight: 700;
+  font-size: 18px;
+}
+#submitViewBtn:hover {
+  background: linear-gradient(135deg, #00b4d8, #0077b6);
+}
+#avgNote {
+  text-align: center;
+  color: #0077b6;
+  font-size: 14px;
+  margin-top: 16px;
+  font-weight: 600;
+}
+
 </style>
+
 </head>
 <body>
 <div class="container">
@@ -131,6 +151,8 @@ button:hover { background:#023e8a; }
     <div class="subject-card"><p>数学</p><p>平均: 0点</p><p>集計数: 0</p></div>
     <div class="subject-card"><p>英語</p><p>平均: 0点</p><p>集計数: 0</p></div>
   </div>
+  <p id="avgNote">※集計数が5以上のときに平均点が表示されます</p>
+
 </div>
 
 <!-- フッター -->
@@ -203,7 +225,7 @@ function displayResult(stats){
   if(!stats){
     div.textContent="データが不十分なため、偏差値表示はできません\n集計数が5以上になるまでお待ち下さい。";
   } else {
-    div.innerHTML=`あなたは、上位 <span class="number">${stats.percentile}</span>% で偏差値は <span class="number">${stats.deviation}</span> です。`;
+    div.innerHTML=`あなたは、上位 <span class="number">${stats.percentile}</span>%で<br>偏差値は <span class="number">${stats.deviation}</span> です。`;
   }
 }
 
