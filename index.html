@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>鉄緑会 校内模試平均予想</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;600&display=swap" rel="stylesheet">
+<style>
+body {
+  margin:0; font-family:'Noto Sans JP', sans-serif;
+  background:linear-gradient(135deg,#0077b6,#90e0ef);
+  color:#333; min-height:100vh;
+}
+.container {
+  background:#fff; padding:40px; border-radius:16px;
+  box-shadow:0 8px 24px rgba(0,0,0,0.1); text-align:center; max-width:400px; margin:40px auto;
+}
+h1 { margin-bottom:8px; font-weight:600; color:#0077b6; }
+.subtitle { color:#d9534f; font-size:14px; margin-bottom:24px; }
+.form-group { margin-bottom:20px; text-align:left; }
+label { font-weight:600; display:block; margin-bottom:8px; }
+select,input { width:100%; padding:10px; border:1px solid #ccc; border-radius:8px; font-size:16px; }
+button {
+  background:#0077b6; color:white; border:none; padding:12px 20px;
+  border-radius:8px; font-size:16px; cursor:pointer; transition:background 0.3s ease;
+  margin-top:16px; width:100%;
+}
+button:hover { background:#023e8a; }
+#viewOnlyBtn .note { display:block; color:white; font-size:16px; margin-top:4px; }
+.success-message {
+  display:none; margin-top:16px; padding:12px 16px; border-radius:8px;
+  background-color:#b6f0a8; color:#055700; font-weight:600;
+  opacity:1; transition: opacity 1s ease;
+}
+.success-message.fade-out { opacity:0; }
+.average-section {
+  max-width:700px; margin:60px auto; padding:20px;
+  background:rgba(255,255,255,0.9); border-radius:16px;
+  box-shadow:0 6px 20px rgba(0,0,0,0.1); text-align:left;
+}
+.average-section h2 { color:#0077b6; margin-bottom:20px; text-align:center; font-size:28px;}
+.grade-section { margin-top:24px; }
+.grade-section h3 {
+  font-size:26px; font-weight:700;
+  background: linear-gradient(90deg,#0077b6,#00b4d8);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; margin-bottom:16px;
+}
+.subject-card {
+  display:flex; justify-content:space-between;
+  background: linear-gradient(135deg,#90e0ef,#ffffff);
+  border-radius:12px; padding:12px 16px; margin-bottom:10px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.05); font-size:18px; font-weight:600;
+}
+.subject-card p { margin:0; }
+#resultDisplay {
+  display:inline-block; margin-top:24px; padding:8px 16px; border-radius:8px;
+  background:#fff; font-weight:700; color:#0077b6; font-size:20px; text-align:center;
+}
+#resultDisplay .number { font-size:28px; }
+
+/* フッター追加 */
+#footer {
+  text-align: center;
+  font-size: 14px;
+  color: #fff;
+  margin: 40px 0 20px 0;
+}
+#footer a { color: #fff; text-decoration: underline; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>鉄緑会 校内模試平均予想</h1>
+  <p class="subtitle">受付中：'25年度 第1回校内模試</p>
+
+  <form id="scoreForm">
+    <div class="form-group">
+      <label for="grade">学年を選択</label>
+      <select id="grade" name="grade">
+        <option value="j1">中1</option>
+        <option value="j2">中2</option>
+        <option value="j3">中3</option>
+        <option value="h1">高1</option>
+        <option value="h2">高2</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="subject">科目を選択</label>
+      <select id="subject" name="subject">
+        <option value="math">数学</option>
+        <option value="english">英語</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="score">あなたの得点を入力</label>
+      <input type="number" id="score" name="score" min="0" max="120" placeholder="例: 75（半角）" required>
+    </div>
+
+    <button type="button" id="submitViewBtn">送信+結果閲覧</button>
+    <button type="button" id="viewOnlyBtn">結果閲覧のみ
+      <span class="note">(データは平均に反映されません)</span>
+    </button>
+
+    <div class="success-message" id="successMessage">送信しました！ご協力ありがとうございます。</div>
+    <div id="resultDisplay"></div>
+  </form>
+</div>
+
+<div class="average-section">
+  <h2>【集計中】<br>2025年度 第1回校内模試 予想平均点</h2>
+  <div class="grade-section"><h3>中1</h3>
+    <div class="subject-card"><p>数学</p><p>平均: 0点</p><p>集計数: 0</p></div>
+    <div class="subject-card"><p>英語</p><p>平均: 0点</p><p>集計数: 0</p></div>
+  </div>
+  <div class="grade-section"><h3>中2</h3>
+    <div class="subject-card"><p>数学</p><p>平均: 0点</p><p>集計数: 0</p></div>
+    <div class="subject-card"><p>英語</p><p>平均: 0点</p><p>集計数: 0</p></div>
+  </div>
+  <div class="grade-section"><h3>中3</h3>
+    <div class="subject-card"><p>数学</p><p>平均: 0点</p><p>集計数: 0</p></div>
+    <div class="subject-card"><p>英語</p><p>平均: 0点</p><p>集計数: 0</p></div>
+  </div>
+  <div class="grade-section"><h3>高1</h3>
+    <div class="subject-card"><p>数学</p><p>平均: 0点</p><p>集計数: 0</p></div>
+    <div class="subject-card"><p>英語</p><p>平均: 0点</p><p>集計数: 0</p></div>
+  </div>
+  <div class="grade-section"><h3>高2</h3>
+    <div class="subject-card"><p>数学</p><p>平均: 0点</p><p>集計数: 0</p></div>
+    <div class="subject-card"><p>英語</p><p>平均: 0点</p><p>集計数: 0</p></div>
+  </div>
+</div>
+
+<!-- フッター -->
+<div id="footer">
+  これは鉄緑生が制作した非公式サイトです。不具合が発生した場合は <a href="mailto:mugentaro777@gmail.com">mugentaro777@gmail.com</a> へご連絡ください。<br>
+  鉄緑会の公式サイトは <a href="https://www.tetsuryokukai.jp/">こちら</a> です。<br>
+  サイト公開日時：2025年8月22日
+</div>
+
+<script>
+const SHEETDB_ENDPOINT = "https://sheetdb.io/api/v1/sy32yqxnihii6";
+
+const gradeSections = document.querySelectorAll(".grade-section");
+const cardMap = [];
+
+gradeSections.forEach(section => {
+  const gradeText = section.querySelector("h3").textContent;
+  const cards = section.querySelectorAll(".subject-card");
+  cards.forEach(card => {
+    const subject = card.querySelector("p").textContent==="数学"?"math":"english";
+    let gradeKey = gradeText==="中1"?"j1":gradeText==="中2"?"j2":gradeText==="中3"?"j3":gradeText==="高1"?"h1":"h2";
+    const pElems = card.querySelectorAll("p");
+    cardMap.push({grade: gradeKey, subject, avgElem:pElems[1], countElem:pElems[2]});
+  });
+});
+
+async function fetchSheetData() {
+  const res = await fetch(SHEETDB_ENDPOINT);
+  if(!res.ok) throw new Error("スプレッドシート取得失敗");
+  return await res.json();
+}
+
+async function updateAllAverages() {
+  try {
+    const data = await fetchSheetData();
+    cardMap.forEach(card => {
+      const filtered = data.filter(row => row.Grade===card.grade && row.Subject===card.subject && Number(row.notaverage)===0);
+      const count = filtered.length;
+      let avgText = "未判定";
+      if(count>=5){
+        const sum = filtered.reduce((acc,row)=>acc+Number(row.Score),0);
+        avgText = (sum/count).toFixed(1)+"点";
+      }
+      card.avgElem.textContent = "平均: "+avgText;
+      card.countElem.textContent = "集計数: "+count;
+    });
+  } catch(err){
+    console.error("平均取得エラー:",err);
+    cardMap.forEach(card=>{card.avgElem.textContent="平均: 未取得"; card.countElem.textContent="集計数: -";});
+  }
+}
+
+function calculateStats(data, inputScore){
+  const scores = data.map(r=>Number(r.Score)).sort((a,b)=>a-b);
+  const n = scores.length;
+  if(n<5) return null; // データ不足
+  const mean = scores.reduce((a,b)=>a+b,0)/n;
+  const std = Math.sqrt(scores.reduce((a,b)=>a+Math.pow(b-mean,2),0)/n);
+  const deviation = ((inputScore-mean)/std*10+50).toFixed(1);
+
+  let rank = 0;
+  for(let i=0;i<n;i++){ if(scores[i]<=inputScore) rank=i+1; }
+  const percentile = ((n-rank)/n*100).toFixed(1);
+
+  return {deviation, percentile};
+}
+
+function displayResult(stats){
+  const div = document.getElementById("resultDisplay");
+  if(!stats){
+    div.textContent="データが不十分なため、偏差値表示はできません\n集計数が5以上になるまでお待ち下さい。";
+  } else {
+    div.innerHTML=`あなたは、上位 <span class="number">${stats.percentile}</span>% で偏差値は <span class="number">${stats.deviation}</span> です。`;
+  }
+}
+
+async function handleSubmit(sendFlag){
+  const btns = [document.getElementById("submitViewBtn"),document.getElementById("viewOnlyBtn")];
+  btns.forEach(b=>b.disabled=true);
+
+  const grade=document.getElementById("grade").value;
+  const subject=document.getElementById("subject").value;
+  const score=Number(document.getElementById("score").value);
+  const today=new Date().toISOString().split('T')[0];
+  const notaverage = sendFlag?0:1;
+
+  const payload = {data:[{Date:today,Grade:grade,Subject:subject,Score:score,notaverage:notaverage}]};
+
+  try{
+    if(sendFlag){
+      const res = await fetch(SHEETDB_ENDPOINT,{
+        method:"POST",
+        headers:{"Content-Type":"application/json","Accept":"application/json"},
+        body:JSON.stringify(payload)
+      });
+      if(!res.ok) throw new Error(`HTTP ${res.status}`);
+      await res.json();
+      const msg = document.getElementById("successMessage");
+      msg.style.display="block";
+      document.getElementById("score").value="";
+      setTimeout(()=>{msg.classList.add("fade-out");},3000);
+      msg.addEventListener("transitionend",()=>{msg.style.display="none"; msg.classList.remove("fade-out");});
+    }
+
+    const allData = await fetchSheetData();
+    const filtered = allData.filter(r=>r.Grade===grade && r.Subject===subject && Number(r.notaverage)===0);
+    const stats = calculateStats(filtered,score);
+    displayResult(stats);
+
+    await updateAllAverages();
+  }catch(err){console.error(err); alert("送信に失敗しました:"+err.message);}
+  finally{btns.forEach(b=>b.disabled=false);}
+}
+
+document.getElementById("submitViewBtn").addEventListener("click",()=>handleSubmit(true));
+document.getElementById("viewOnlyBtn").addEventListener("click",()=>handleSubmit(false));
+
+updateAllAverages();
+</script>
+</body>
+</html>
