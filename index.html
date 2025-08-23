@@ -163,7 +163,7 @@ button:hover { background:#023e8a; }
 </div>
 
 <script>
-const SHEETDB_ENDPOINT = "https://sheetdb.io/api/v1/sy32yqxnihii6";
+const SHEETDB_ENDPOINT = "https://sheetdb.io/api/v1/2zn2pc3k6mp38";
 
 const gradeSections = document.querySelectorAll(".grade-section");
 const cardMap = [];
@@ -208,7 +208,7 @@ async function updateAllAverages() {
 function calculateStats(data, inputScore){
   const scores = data.map(r=>Number(r.Score)).sort((a,b)=>a-b);
   const n = scores.length;
-  if(n<5) return null; // データ不足
+  if(n<5) return null;
   const mean = scores.reduce((a,b)=>a+b,0)/n;
   const std = Math.sqrt(scores.reduce((a,b)=>a+Math.pow(b-mean,2),0)/n);
   const deviation = ((inputScore-mean)/std*10+50).toFixed(1);
@@ -236,13 +236,20 @@ async function handleSubmit(sendFlag){
   const grade=document.getElementById("grade").value;
   const subject=document.getElementById("subject").value;
   const score=Number(document.getElementById("score").value);
+  
+  // 下限・上限チェック
+if (score < 0 || score > 120) {
+    alert("得点は0～120の範囲で入力してください。");
+    btns.forEach(b => b.disabled = false); // ボタンを戻す
+    return; // 送信処理を中断
+}
   const today=new Date().toISOString().split('T')[0];
   const notaverage = sendFlag?0:1;
-
   const payload = {data:[{Date:today,Grade:grade,Subject:subject,Score:score,notaverage:notaverage}]};
 
   try{
     if(sendFlag){
+      // 認証不要で POST
       const res = await fetch(SHEETDB_ENDPOINT,{
         method:"POST",
         headers:{"Content-Type":"application/json","Accept":"application/json"},
@@ -250,6 +257,7 @@ async function handleSubmit(sendFlag){
       });
       if(!res.ok) throw new Error(`HTTP ${res.status}`);
       await res.json();
+
       const msg = document.getElementById("successMessage");
       msg.style.display="block";
       document.getElementById("score").value="";
@@ -271,6 +279,19 @@ document.getElementById("submitViewBtn").addEventListener("click",()=>handleSubm
 document.getElementById("viewOnlyBtn").addEventListener("click",()=>handleSubmit(false));
 
 updateAllAverages();
+
+const MAINTENANCE_MODE = false;
+
+if (MAINTENANCE_MODE) {
+  document.body.innerHTML = `
+    <div style="text-align:center; padding:100px; font-family:sans-serif;">
+      <h1>メンテナンス中</h1>
+      <p>ただいまご利用いただけません。しばらくお待ちください。</p>
+    </div>
+  `;
+  throw new Error("Maintenance mode enabled");
+}
 </script>
+
 </body>
 </html>
