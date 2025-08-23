@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>鉄緑会 校内模試平均予想</title>
+<title>鉄緑会 校内模試平均</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;600&display=swap" rel="stylesheet">
 <style>
 body {
@@ -59,6 +59,10 @@ button:hover { background:#023e8a; }
 }
 #resultDisplay .number { font-size:28px; }
 
+h3 {
+  color: #e57373; /* 通常時の優しい赤 */
+}
+
 /* フッター追加 */
 #footer {
   text-align: center;
@@ -86,13 +90,71 @@ button:hover { background:#023e8a; }
   font-weight: 600;
 }
 
+/* 右上固定ボタン */
+#headerNotice {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
+#noticeBtn {
+  background: linear-gradient(135deg, #00d4ff, #0096c7);
+  border: none;
+  border-radius: 12px;
+  padding: 8px 14px;
+  color: #fff;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+#noticeBtn:hover {
+  background: linear-gradient(135deg, #00b4d8, #0077b6);
+}
+
+/* ポップアップ */
+#noticePopup {
+  display: none;
+  position: fixed;
+  top:0; left:0;
+  width: 100%; height:100%;
+  background: rgba(0,0,0,0.5);
+  z-index: 2000;
+  justify-content: center;
+  align-items: center;
+}
+
+/* 中央の内容 */
+#noticeContent {
+  background: #fff;
+  padding: 20px 30px;
+  border-radius: 16px;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+}
+
+/* 閉じるボタン */
+#closeNotice {
+  margin-top: 16px;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 8px;
+  background: #0077b6;
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+#closeNotice:hover { background: #005f86; }
+
 </style>
 
 </head>
 <body>
 <div class="container">
   <h1>鉄緑会 校内模試平均予想</h1>
-  <p class="subtitle">受付中：'25年度 第1回校内模試 <br>一応なおしましたby管理人</p>
+  <p class="subtitle">受付中：'25年度 第1回校内模試 </p>
 
   <form id="scoreForm">
     <div class="form-group">
@@ -162,8 +224,21 @@ button:hover { background:#023e8a; }
   サイト公開日時：2025年8月22日
 </div>
 
+<!-- 追加するヘッダーとポップアップ -->
+<div id="headerNotice">
+  <button id="noticeBtn">お知らせ</button>
+</div>
+
+<div id="noticePopup">
+  <div id="noticeContent">
+    <p><h1>お知らせ<br> <h3>・2025/8/23 21:00より復旧しました。<br><h4>・当サイトは開発段階につき、正常に動作しないことがあります。<br>・当サイトで算出されたデータは信頼性を持つものではありません。</p>
+    <button id="closeNotice">閉じる</button>
+  </div>
+</div>
+
+
 <script>
-const SHEETDB_ENDPOINT = "https://sheetdb.io/api/v1/jwqym3rmbogrw";
+const SHEETDB_ENDPOINT = "https://api.sheetbest.com/sheets/b6e36562-1bf8-42f0-b4f5-1f8acb79bdad";
 
 const gradeSections = document.querySelectorAll(".grade-section");
 const cardMap = [];
@@ -245,7 +320,10 @@ if (score < 0 || score > 120) {
 }
   const today=new Date().toISOString().split('T')[0];
   const notaverage = sendFlag?0:1;
-  const payload = {data:[{Date:today,Grade:grade,Subject:subject,Score:score,notaverage:notaverage}]};
+ const payload = [
+  { Date: today, Grade: grade, Subject: subject, Score: score, notaverage: notaverage }
+];
+
 
   try{
     if(sendFlag){
@@ -291,6 +369,19 @@ if (MAINTENANCE_MODE) {
   `;
   throw new Error("Maintenance mode enabled");
 }
+
+document.getElementById("noticeBtn").addEventListener("click", () => {
+  document.getElementById("noticePopup").style.display = "flex";
+});
+document.getElementById("closeNotice").addEventListener("click", () => {
+  document.getElementById("noticePopup").style.display = "none";
+});
+document.getElementById("noticePopup").addEventListener("click", e => {
+  if (e.target === document.getElementById("noticePopup")) {
+    document.getElementById("noticePopup").style.display = "none";
+  }
+});
+
 </script>
 
 </body>
