@@ -207,6 +207,47 @@ h3 {
   }
 }
 
+/*送信＋結果閲覧ボタンのキラーンエフェクト*/
+
+/* キラーン効果の共通設定 */
+button.anim-kiran {
+  position: relative;
+  overflow: hidden;
+}
+
+button.anim-kiran::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -30px;
+  width: 30px;
+  height: 200%;
+  background: rgba(255,255,255,0.7);
+  transform: rotate(45deg);
+  opacity: 0;
+  pointer-events: none;
+}
+
+button.anim-kiran:hover::before {
+  animation: kiran 0.3s linear;
+}
+
+/* アニメーション */
+@keyframes kiran {
+  0% {
+    left: -40px;
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    left: 120%;
+    opacity: 0;
+  }
+}
+
+
 </style>
 
 </head>
@@ -246,7 +287,7 @@ h3 {
       <input type="number" id="score" name="score" min="0" max="120" placeholder="例: 75（半角）" required>
     </div>
 
-    <button type="button" id="submitViewBtn">送信+結果閲覧</button>
+    <button type="button" id="submitViewBtn" class="anim-kiran">送信+結果閲覧</button>
     <button type="button" id="viewOnlyBtn">結果閲覧のみ
       <span class="note">(データは平均に反映されません)</span>
     </button>
