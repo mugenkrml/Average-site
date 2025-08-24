@@ -93,7 +93,7 @@ h3 {
 /* 右上固定ボタン - 強調版 */
 #headerNotice {
   position: fixed;
-  top: 20px;
+  top: 100px;
   right: 20px;
   z-index: 1000;
   pointer-events: auto;
@@ -376,23 +376,20 @@ async function handleSubmit(sendFlag){
   const grade=document.getElementById("grade").value;
   const subject=document.getElementById("subject").value;
   const score=Number(document.getElementById("score").value);
-  
-  // 下限・上限チェック
-if (score < 0 || score > 120) {
-    alert("得点は0～120の範囲で入力してください。");
-    btns.forEach(b => b.disabled = false); // ボタンを戻す
-    return; // 送信処理を中断
-}
-  const today=new Date().toISOString().split('T')[0];
-  const notaverage = sendFlag?0:1;
- const payload = [
-  { Date: today, Grade: grade, Subject: subject, Score: score, notaverage: notaverage }
-];
 
+  if(score < 0 || score > 120){
+    alert("得点は0～120の範囲で入力してください。");
+    btns.forEach(b => b.disabled = false);
+    return;
+  }
+
+  const today = new Date().toISOString().split('T')[0];
+  const notaverage = sendFlag ? 0 : 1;
+  const payload = [{ Date: today, Grade: grade, Subject: subject, Score: score, notaverage: notaverage }];
 
   try{
-    if(sendFlag){
-      // 認証不要で POST
+    // 0点と120点は送信しない
+    if(sendFlag && score!==0 && score!==120){
       const res = await fetch(SHEETDB_ENDPOINT,{
         method:"POST",
         headers:{"Content-Type":"application/json","Accept":"application/json"},
@@ -400,22 +397,28 @@ if (score < 0 || score > 120) {
       });
       if(!res.ok) throw new Error(`HTTP ${res.status}`);
       await res.json();
-
-      const msg = document.getElementById("successMessage");
-      msg.style.display="block";
-      document.getElementById("score").value="";
-      setTimeout(()=>{msg.classList.add("fade-out");},3000);
-      msg.addEventListener("transitionend",()=>{msg.style.display="none"; msg.classList.remove("fade-out");});
     }
 
+    // 成功メッセージ表示
+    const msg = document.getElementById("successMessage");
+    msg.style.display="block";
+    document.getElementById("score").value="";
+    setTimeout(()=>{msg.classList.add("fade-out");},3000);
+    msg.addEventListener("transitionend",()=>{msg.style.display="none"; msg.classList.remove("fade-out");});
+
+    // 偏差値表示
     const allData = await fetchSheetData();
     const filtered = allData.filter(r=>r.Grade===grade && r.Subject===subject && Number(r.notaverage)===0);
-    const stats = calculateStats(filtered,score);
+    const stats = calculateStats(filtered, score);
     displayResult(stats);
 
     await updateAllAverages();
-  }catch(err){console.error(err); alert("送信に失敗しました:"+err.message);}
-  finally{btns.forEach(b=>b.disabled=false);}
+  } catch(err){
+    console.error(err);
+    alert("送信に失敗しました:"+err.message);
+  } finally{
+    btns.forEach(b=>b.disabled=false);
+  }
 }
 
 document.getElementById("submitViewBtn").addEventListener("click",()=>handleSubmit(true));
@@ -423,9 +426,9 @@ document.getElementById("viewOnlyBtn").addEventListener("click",()=>handleSubmit
 
 updateAllAverages();
 
+// メンテナンスモード
 const MAINTENANCE_MODE = false;
-
-if (MAINTENANCE_MODE) {
+if(MAINTENANCE_MODE){
   document.body.innerHTML = `
     <div style="text-align:center; padding:100px; font-family:sans-serif;">
       <h1>メンテナンス中</h1>
@@ -435,6 +438,7 @@ if (MAINTENANCE_MODE) {
   throw new Error("Maintenance mode enabled");
 }
 
+// お知らせポップアップ
 document.getElementById("noticeBtn").addEventListener("click", () => {
   document.getElementById("noticePopup").style.display = "flex";
 });
@@ -442,32 +446,14 @@ document.getElementById("closeNotice").addEventListener("click", () => {
   document.getElementById("noticePopup").style.display = "none";
 });
 document.getElementById("noticePopup").addEventListener("click", e => {
-  if (e.target === document.getElementById("noticePopup")) {
-    document.getElementById("noticePopup").style.display = "none";
-  }
-}); 
+  if(e.target===document.getElementById("noticePopup")) document.getElementById("noticePopup").style.display="none";
+});
 
-// -------------------------
-// トップ通知バーの表示/非表示フラグ
-// true = 表示, false = 非表示
-const SHOW_TOP_NOTICE = true;  
-
+// トップ通知バー
+const SHOW_TOP_NOTICE = true;
 const noticeBar = document.getElementById("topNoticeBar");
-
-if(SHOW_TOP_NOTICE){
-  noticeBar.classList.remove("hidden");
-} else {
-  noticeBar.classList.add("hidden");
-}
-
-// 必要に応じて JS から切り替え可能
-// 例:
-// noticeBar.classList.add("hidden");   // 非表示
-// noticeBar.classList.remove("hidden"); // 表示
-
-
-
-
+if(SHOW_TOP_NOTICE) noticeBar.classList.remove("hidden");
+else noticeBar.classList.add("hidden");
 
 </script>
 
