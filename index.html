@@ -90,40 +90,61 @@ h3 {
   font-weight: 600;
 }
 
-/* 右上固定ボタン */
+/* 右上固定ボタン - 強調版 */
 #headerNotice {
   position: fixed;
   top: 20px;
   right: 20px;
   z-index: 1000;
+  pointer-events: auto;
 }
 
 #noticeBtn {
-  background: linear-gradient(135deg, #00d4ff, #0096c7);
+  background: linear-gradient(135deg, #00e0ff, #0077cc);
   border: none;
-  border-radius: 12px;
-  padding: 8px 14px;
+  border-radius: 16px;
+  padding: 12px 20px;
   color: #fff;
-  font-weight: 700;
-  font-size: 14px;
+  font-weight: 800;
+  font-size: 16px;
   cursor: pointer;
-  transition: background 0.3s ease;
-}
-#noticeBtn:hover {
-  background: linear-gradient(135deg, #00b4d8, #0077b6);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+  animation: floatNotice 3s ease-in-out infinite;
 }
 
-/* ポップアップ */
-#noticePopup {
-  display: none;
-  position: fixed;
-  top:0; left:0;
-  width: 100%; height:100%;
-  background: rgba(0,0,0,0.5);
-  z-index: 2000;
-  justify-content: center;
-  align-items: center;
+#noticeBtn:hover {
+  background: linear-gradient(135deg, #00b4d8, #005f86);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
 }
+
+/* ゆらゆら浮くアニメーション */
+@keyframes floatNotice {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-4px); }
+}
+
+
+
+/* ポップアップ ここからーーーーーー*/
+
+/* ポップアップ */ #noticePopup { 
+  display: none; 
+  position: fixed; 
+  top:0; 
+  left:0; 
+  width: 100%; 
+  height:100%; 
+  background: rgba(0,0,0,0.5); 
+  z-index: 2000; 
+  justify-content: center; 
+  align-items: center; }
+
+/*ポップアップここまでーーーーーーー*/
+
+
+
 
 /* 中央の内容 */
 #noticeContent {
@@ -148,10 +169,54 @@ h3 {
 }
 #closeNotice:hover { background: #005f86; }
 
+#topNoticeBar {
+  display: flex;
+  justify-content: center;
+  align-items: center;  /* 縦中央 */
+  background-color: #fefefe; /* 白寄りの背景 */
+  color: #fa6e6e;           /* サイト青 */
+  font-weight: 700;
+  font-size: 18px;           /* 文字大きめ */
+  padding: 12px 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  margin: 20px auto 0 auto;
+  width: calc(100% - 40px); /* 横幅調整 */
+  max-width: 600px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-sizing: border-box;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  opacity: 1;
+}
+
+/* 非表示用 */
+#topNoticeBar.hidden {
+  opacity: 0;
+  transform: translateY(-20px);
+  pointer-events: none;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 480px) {
+  #topNoticeBar {
+    font-size: 16px;
+    padding: 10px 16px;
+  }
+}
+
 </style>
 
 </head>
 <body>
+
+  <!-- ページトップ通知バー -->
+<div id="topNoticeBar">
+  <span>8/24 15時に、855件のスパムの一括削除を行いました。</span>
+</div>
+
 <div class="container">
   <h1>鉄緑会 校内模試平均予想</h1>
   <p class="subtitle">受付中：'25年度 第1回校内模試 </p>
@@ -380,7 +445,29 @@ document.getElementById("noticePopup").addEventListener("click", e => {
   if (e.target === document.getElementById("noticePopup")) {
     document.getElementById("noticePopup").style.display = "none";
   }
-});
+}); 
+
+// -------------------------
+// トップ通知バーの表示/非表示フラグ
+// true = 表示, false = 非表示
+const SHOW_TOP_NOTICE = true;  
+
+const noticeBar = document.getElementById("topNoticeBar");
+
+if(SHOW_TOP_NOTICE){
+  noticeBar.classList.remove("hidden");
+} else {
+  noticeBar.classList.add("hidden");
+}
+
+// 必要に応じて JS から切り替え可能
+// 例:
+// noticeBar.classList.add("hidden");   // 非表示
+// noticeBar.classList.remove("hidden"); // 表示
+
+
+
+
 
 </script>
 
