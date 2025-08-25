@@ -59,6 +59,10 @@ button:hover { background:#023e8a; }
 }
 #resultDisplay .number { font-size:28px; }
 
+h2 {
+  color: #0077b6; /* h1と同じ */
+}
+
 h3 {
   color: #e57373; /* 通常時の優しい赤 */
 }
@@ -140,6 +144,52 @@ h3 {
   z-index: 2000; 
   justify-content: center; 
   align-items: center; }
+
+/* 更新情報ボタン */
+#updateBtn {
+  background: linear-gradient(135deg, #38ef7d, #11998e);
+  border: none;
+  border-radius: 16px;
+  padding: 12px 20px;
+  color: #fff;
+  font-weight: 800;
+  font-size: 16px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+  animation: floatNotice 3s ease-in-out infinite;
+  margin-top: 10px; /* お知らせボタンの下に配置 */
+}
+
+#updateBtn:hover {
+  background: linear-gradient(135deg, #34d399, #047857);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+}
+
+/* 更新情報ポップアップ */
+#updatePopup {
+  display: none;
+  position: fixed;
+  top:0;
+  left:0;
+  width: 100%;
+  height:100%;
+  background: rgba(0,0,0,0.5);
+  z-index: 2000;
+  justify-content: center;
+  align-items: center;
+}
+
+#updateContent {
+  background: #fff;
+  padding: 20px 30px;
+  border-radius: 16px;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+}
+
 
 /*ポップアップここまでーーーーーーー*/
 
@@ -247,6 +297,43 @@ button.anim-kiran:hover::before {
   }
 }
 
+/*校内模試平均予想見出しのラインCSS*/
+
+.line {
+  display: block;
+  position: relative;
+}
+.line::after {
+  background: linear-gradient(to right, #362ae0 0%,#3b79cc 50%,#42d3ed 100%);
+  content: '';
+  display: block;
+  height: 2px;  /* ←1pxだとスマホで見にくいかもなので2px推奨 */
+  width: 0;
+  transform: translateX(-50%);
+  transition: 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+  position: absolute;
+  bottom: -3px; /* 見出しとの余白 */
+  left: 50%;
+}
+.line.is-animated::after {
+  width: 70%;
+}
+
+/*科目カードのアニメーション*/
+
+/* 初期状態（非表示 & 左にずらす） */
+.subject-card {
+  opacity: 0;
+  transform: translateX(-30px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+/* 表示時 */
+.subject-card.show {
+  opacity: 1;
+  transform: translateX(0);
+}
+
 
 </style>
 
@@ -259,6 +346,7 @@ button.anim-kiran:hover::before {
 </div>
 
 <div class="container">
+  <h2>Ver.1.0.9</h2>
   <h1>鉄緑会 校内模試平均予想</h1>
   <p class="subtitle">受付中：'25年度 第1回校内模試 </p>
 
@@ -299,6 +387,7 @@ button.anim-kiran:hover::before {
 
 <div class="average-section">
   <h2>【集計中】<br>2025年度 第1回校内模試 予想平均点</h2>
+  <div class="line"></div>
   <div class="grade-section"><h3>中1</h3>
     <div class="subject-card"><p>数学</p><p>平均: 0点</p><p>集計数: 0</p></div>
     <div class="subject-card"><p>英語</p><p>平均: 0点</p><p>集計数: 0</p></div>
@@ -333,12 +422,24 @@ button.anim-kiran:hover::before {
 <!-- 追加するヘッダーとポップアップ -->
 <div id="headerNotice">
   <button id="noticeBtn">お知らせ</button>
+  <button id="updateBtn">更新情報</button> <!-- 追加 -->
 </div>
 
 <div id="noticePopup">
   <div id="noticeContent">
     <p><h1>お知らせ<br> <h3>・2025/8/23 21:00より復旧しました。<br><h4>・当サイトは開発段階につき、正常に動作しないことがあります。<br>・当サイトで算出されたデータは信頼性を持つものではありません。</p>
     <button id="closeNotice">閉じる</button>
+  </div>
+</div>
+
+<!-- 更新情報ポップアップ -->
+<div id="updatePopup">
+  <div id="updateContent">
+    <h1 style="color:#28a745;">更新情報</h1>
+    <h3 style="color:#ff7070;">現在のバージョン 1.0.9</h3>
+    <h4 style="color:#000000;">25.8.25 デザインの修正 更新情報メニュー</h4>
+      
+    <button id="closeUpdate">閉じる</button>
   </div>
 </div>
 
@@ -495,6 +596,54 @@ const SHOW_TOP_NOTICE = true;
 const noticeBar = document.getElementById("topNoticeBar");
 if(SHOW_TOP_NOTICE) noticeBar.classList.remove("hidden");
 else noticeBar.classList.add("hidden");
+
+// h2 のすぐ下の .line をターゲット
+const line = document.querySelector(".average-section .line");
+
+if(line){
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        line.classList.add("is-animated");
+        observer.unobserve(line); // 一度だけ発火
+      }
+    });
+  }, { threshold: 0.5 }); // 50%見えたら発火
+
+  observer.observe(line);
+}
+
+/*科目カードのアニメーション*/
+
+// 科目カードのフェードインアニメーション
+const subjectCards = document.querySelectorAll(".subject-card");
+
+const cardObserver = new IntersectionObserver((entries, observer) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add("show");
+      observer.unobserve(entry.target); // 一度だけ発火
+    }
+  });
+}, { threshold: 0.2 });
+
+subjectCards.forEach(card => cardObserver.observe(card));
+
+/*更新情報ボタン*/
+
+// 更新情報ポップアップ
+document.getElementById("updateBtn").addEventListener("click", () => {
+  document.getElementById("updatePopup").style.display = "flex";
+});
+document.getElementById("closeUpdate").addEventListener("click", () => {
+  document.getElementById("updatePopup").style.display = "none";
+});
+document.getElementById("updatePopup").addEventListener("click", e => {
+  if(e.target===document.getElementById("updatePopup")) {
+    document.getElementById("updatePopup").style.display="none";
+  }
+});
+
 
 </script>
 
